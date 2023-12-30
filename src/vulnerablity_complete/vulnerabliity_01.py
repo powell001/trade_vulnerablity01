@@ -254,11 +254,11 @@ def main():
     print("these states are missing: ", thesestatesmissing)
 
     # save it for analysis
-    df1.to_csv("third_try_b.csv")
+    df1.to_csv("output/third_try_b.csv")
     # these states are missing
     pd.DataFrame(thesestatesmissing).to_csv("output/thesestatesmissing.csv")
 
-main()  # uncomment to run and overwrite data
+# main()  # uncomment to run and overwrite data
 
 data = pd.read_csv("output/third_try_b.csv")
 
@@ -269,7 +269,7 @@ data = data[data["TotalImportsNLD"] >= 100]
 data['largestExporter'] = data["ExporterstoNLD"].map(lambda x: getfirstcountry(x))
 
 # add regions
-iso_regions = pd.read_csv("wgidata_iso3countrycodes/iso_countries_regions.csv")
+iso_regions = pd.read_csv("../../data/iso_countries_regions.csv")
 iso_regions = iso_regions[['alpha-3', 'region']]
 data = data.merge(iso_regions, left_on="largestExporter", right_on="alpha-3", how="left")
 data.drop(columns=["alpha-3"], inplace=True)
@@ -289,7 +289,7 @@ toNormalize = ['WorldMarketConcentration', 'ImportDiversificationNLD', 'ImportsF
 data[['normalizeWorldMarketConcentration', 'normalizeImportDiversificationNLD', 'normalizeImportsFromNonEU', 'normalizeReplacementPotential', 'normalizeWGI']] = data[toNormalize].apply(lambda x: (x - x.min()) / (x.max() - x.min()))
 data['normalizedTotalVulnerablity'] = data['normalizeWorldMarketConcentration']  + data['normalizeImportDiversificationNLD'] + data['normalizeImportsFromNonEU'] + data['normalizeReplacementPotential'] - data['normalizeWGI']
 
-data.to_csv("complete.csv")
+data.to_csv("output/complete.csv")
 data = pd.read_csv("output/complete.csv")
 data.rename(columns = {'Unnamed: 0': 'ProdID'}, inplace = True)
 
@@ -306,7 +306,7 @@ vulIndices = data[indices]
 
 topPercent = .90
 # Value above
-minValue = 1e6
+minValue = 1e2
 data1 = data[data['TotalImportsNLD'] >= minValue]
 
 allprods = []
